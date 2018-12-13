@@ -2,4 +2,5 @@ alveo_cache.db
 files/
 env/
 audio_data/
-kaldi-dataset/
+kaldi_data/
+__pycache__
