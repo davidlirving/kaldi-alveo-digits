@@ -8,13 +8,10 @@ import pandas as pd
 import pyalveo
 
 def numerate(text, word_dict):
-    """ Replaces all instances of everything in %dict, in %text"""
+    """ Replaces all instances of %text with everything contained in %word_dict """
     for i, j in word_dict.items():
         text = text.replace(i, j)
     return text
-
-AAU_ENV_NAME = 'ALVEO_API_URL'
-AAK_ENV_NAME = 'ALVEO_API_KEY'
 
 # Set up our environment variable dict
 settings = {
@@ -38,6 +35,7 @@ for key in settings:
 
 audio_data_dir = './audio_data'
 dataset_csv_path = 'dataset.csv'
+kaldi_dataset_dir = './kaldi-dataset' # Where we'll put generated files from our csv
 
 # Describe our word dictionary for our digits
 digit_dict = {
@@ -65,6 +63,9 @@ print('PyAlveo loaded successfully.')
 
 print('Importing CSV %s...' % dataset_csv_path)
 df = pd.read_csv(dataset_csv_path)
+# Add extra columns for our use
+df['number_prompt'] = None
+df['saved_file_path'] = None
 
 # We need this because our CSV doesn't tell us exactly where the item is at
 item_prefix = 'catalog/austalk/' 
@@ -85,10 +86,11 @@ for speaker in df['speaker'].unique():
 print('Preparation complete. \n\nRetrieving data...')
 # Format our 'prompt' column into their numbers
 for index, row in df.iterrows():
-    row['prompt'] = numerate(row['prompt'], digit_dict)
+    row['number_prompt'] = numerate(row['prompt'], digit_dict)
 
     # Generate the paths for the file, locally and remotely
-    file_path = os.path.join(audio_data_dir, row['speaker'], '%s.wav' % row['prompt'])
+    file_path = os.path.join(audio_data_dir, row['speaker'], '%s.wav' % row['number_prompt'])
+    row['saved_file_path'] = os.path.abspath(file_path)
     speechfile_url = item_prefix + row['item'] + '/document/' + row['media']
 
     # Download the wave file into the correct directory
@@ -101,5 +103,28 @@ for index, row in df.iterrows():
 # text - <utterance ID> <prompt>
 # utt2spk - <utterance ID> <speaker ID>
 # corpus - one line per audio file
+
+# Create our kaldi dataset directory
+if not os.path.exists(kaldi_dataset_dir):
+    print('Creating %s...' % kaldi_dataset_dir)
+    os.makedirs(kaldi_dataset_dir)
+
+# Generate wav.scp
+# <utterance_ID> <absolute_file_path>
+# We'll use folder__filename for utterance ID without the extension, e.g 1_122__1_2_1_9
+def gen_utterance(speaker_id, filename):
+    return "%s__%s" % (speaker_id, os.path.basename(filename))
+
+wavscp_data = ""
+print("Generating wav.scp...")
+for index, row in df.iterrows():
+    wavscp_data += "%s %s\n" % (
+        gen_utterance(row['speaker'], row['number_prompt']),
+        row['saved_file_path']
+    )
+
+with open(os.path.join(kaldi_dataset_dir, 'wav.scp'), 'wb') as wavscp:
+    wavscp.write(wavscp_data)
+    
 
 print('All operations completed successfully.')
