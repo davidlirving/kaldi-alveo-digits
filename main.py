@@ -66,6 +66,7 @@ df = pd.read_csv(dataset_csv_path)
 # Add extra columns for our use
 df['number_prompt'] = None
 df['saved_file_path'] = None
+df['utterance_id'] = None
 
 # We need this because our CSV doesn't tell us exactly where the item is at
 item_prefix = 'catalog/austalk/' 
@@ -110,21 +111,40 @@ if not os.path.exists(kaldi_dataset_dir):
     os.makedirs(kaldi_dataset_dir)
 
 # Generate wav.scp
-# <utterance_ID> <absolute_file_path>
-# We'll use folder__filename for utterance ID without the extension, e.g 1_122__1_2_1_9
+#  <utterance_ID> <absolute_file_path>
+#  We'll use folder__filename for utterance ID without the extension, e.g 1_122__1_2_1_9
 def gen_utterance(speaker_id, filename):
     return "%s__%s" % (speaker_id, os.path.basename(filename))
 
 wavscp_data = ""
 print("Generating wav.scp...")
 for index, row in df.iterrows():
+    utterance_id = gen_utterance(row['speaker'], row['number_prompt'])
     wavscp_data += "%s %s\n" % (
-        gen_utterance(row['speaker'], row['number_prompt']),
+        utterance_id,
         row['saved_file_path']
     )
+    row['utterance_id'] = utterance_id
 
-with open(os.path.join(kaldi_dataset_dir, 'wav.scp'), 'wb') as wavscp:
+with open(os.path.join(kaldi_dataset_dir, 'wav.scp'), 'w') as wavscp:
     wavscp.write(wavscp_data)
+
+# Generate our text
+#  Associate the prompt with the utterance_ID we've created in wav.scp
+#  <utterance_id> number_one number_two number_three number_four
+#  e.g
+#    1_248__3_2_4_4 three two four four
+#    1_242__1_0_9_2 one zero nine two
+text_data = ""
+print("Generating text...")
+for index, row in df.iterrows():
+    text_data += '%s %s\n' % (
+        row['utterance_id'],
+        row['prompt'].replace(', ', ' ')
+    )
+
+with open(os.path.join(kaldi_dataset_dir, 'text'), 'w') as text_file:
+    text_file.write(text_data)
     
 
 print('All operations completed successfully.')
