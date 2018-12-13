@@ -67,6 +67,7 @@ df = pd.read_csv(dataset_csv_path)
 df['number_prompt'] = None
 df['saved_file_path'] = None
 df['utterance_id'] = None
+df['prompt_fmt'] = None
 
 # We need this because our CSV doesn't tell us exactly where the item is at
 item_prefix = 'catalog/austalk/' 
@@ -138,13 +139,37 @@ with open(os.path.join(kaldi_dataset_dir, 'wav.scp'), 'w') as wavscp:
 text_data = ""
 print("Generating text...")
 for index, row in df.iterrows():
+    row['prompt_fmt'] = row['prompt'].replace(', ', ' ')
     text_data += '%s %s\n' % (
         row['utterance_id'],
-        row['prompt'].replace(', ', ' ')
+        row['prompt_fmt']
     )
 
 with open(os.path.join(kaldi_dataset_dir, 'text'), 'w') as text_file:
     text_file.write(text_data)
+
+# Generate utt2spk
+#  Associate all the utterance_ids with a speaker_id
+speaker_data = ""
+print("Generating utt2spk...")
+for index, row in df.iterrows():
+    speaker_data += '%s %s\n' % (
+        row['utterance_id'],
+        row['speaker']
+    )
+
+with open(os.path.join(kaldi_dataset_dir, 'utt2spk'), 'w') as utt2spk:
+    utt2spk.write(speaker_data)
+
+# Generate corpus
+#  One line with every single possible transcription
+transcription_data = ""
+print("Generating corpus...")
+for index, row in df.iterrows():
+    transcription_data += '%s \n' % row['prompt_fmt']
+
+with open(os.path.join(kaldi_dataset_dir, 'corpus'), 'w') as corpus:
+    corpus.write(transcription_data)
     
 
 print('All operations completed successfully.')
