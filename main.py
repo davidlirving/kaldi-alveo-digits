@@ -7,9 +7,16 @@ from inspect import getsourcefile
 import pandas as pd
 import pyalveo
 
+def numerate(text, word_dict):
+    """ Replaces all instances of everything in %dict, in %text"""
+    for i, j in word_dict.items():
+        text = text.replace(i, j)
+    return text
+
 AAU_ENV_NAME = 'ALVEO_API_URL'
 AAK_ENV_NAME = 'ALVEO_API_KEY'
 
+# Set up our environment variable dict
 settings = {
     'ALVEO_API_URL': {
         'required': True,
@@ -21,6 +28,7 @@ settings = {
     }
 }
 
+# Load all environment variables
 for key in settings:
     setting = settings[key]
     setting['value'] = os.environ.get(key)
@@ -31,7 +39,8 @@ for key in settings:
 audio_data_dir = './audio_data'
 dataset_csv_path = 'dataset.csv'
 
-word_dict = {
+# Describe our word dictionary for our digits
+digit_dict = {
     'oh': '0',
     'zero': '0',
     'one': '1',
@@ -50,8 +59,6 @@ print('Loading PyAlveo...')
 client = pyalveo.Client(
     api_url=settings['ALVEO_API_URL']['value'],
     api_key=settings['ALVEO_API_KEY']['value'],
-    #use_cache=False, # Means not to download if it isn't cached, which doesn't seem quite clear
-    #update_cache=True, # This means to store the value in cache if we alter something
     cache_dir=os.path.dirname(os.path.abspath(getsourcefile(lambda:0)))
 )
 print('PyAlveo loaded successfully.')
@@ -61,11 +68,6 @@ df = pd.read_csv(dataset_csv_path)
 
 # We need this because our CSV doesn't tell us exactly where the item is at
 item_prefix = 'catalog/austalk/' 
-
-def numerate(text):
-    for i, j in word_dict.items():
-        text = text.replace(i, j)
-    return text
 
 # Create our needed directories
 if not os.path.exists(audio_data_dir):
@@ -83,7 +85,7 @@ for speaker in df['speaker'].unique():
 print('Preparation complete. \n\nRetrieving data...')
 # Format our 'prompt' column into their numbers
 for index, row in df.iterrows():
-    row['prompt'] = numerate(row['prompt'])
+    row['prompt'] = numerate(row['prompt'], digit_dict)
 
     # Generate the paths for the file, locally and remotely
     file_path = os.path.join(audio_data_dir, row['speaker'], '%s.wav' % row['prompt'])
@@ -94,5 +96,10 @@ for index, row in df.iterrows():
     doc = client.get_document(speechfile_url)
     with open(file_path, 'wb') as wav:
         wav.write(doc)
+
+# Next, we'll need to start generating data such as wav.scp (connecting utterances to speakers)
+# text - <utterance ID> <prompt>
+# utt2spk - <utterance ID> <speaker ID>
+# corpus - one line per audio file
 
 print('All operations completed successfully.')
