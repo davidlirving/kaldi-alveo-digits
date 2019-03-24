@@ -1,4 +1,4 @@
-This is an example project that demonstrates how to use the Alveo dataset to create an automatic digit recognition model with Kaldi. For this project, we will pull data from Alveo of various speakers saying various numbers at random, prepare the data for Kaldi, then train Kaldi on the data that has been prepared for it. This guide is based on [http://kaldi-asr.org/doc/kaldi_for_dummies.html] (http://kaldi-asr.org/doc/kaldi_for_dummies.html).
+This is an example project that demonstrates how to use the Alveo dataset to create an automatic digit recognition model with Kaldi. For this project, we will pull data from Alveo of various speakers saying various numbers at random, prepare the data for Kaldi, then train Kaldi on the data that has been prepared for it. This guide is based on [http://kaldi-asr.org/doc/kaldi_for_dummies.html] (http://kaldi-asr.org/doc/kaldi_for_dummies.html) which includes some troubleshooting information and more in-depth reading; the guide is built from parts of the Yesno, Voxforge and LibriSpeech examples.
 
 Requirements:
 - Python 3
@@ -37,8 +37,9 @@ lattice_beam=6.0
 ```
 --use-energy=false
 ```
+8. Head to the [Kaldi for Dummies guide] (http://kaldi-asr.org/doc/kaldi_for_dummies.html#kaldi_for_dummies_running) and put the scripts into the `kaldi_prep` directory.
 
-Finally, use `run.sh` to start running Kaldi on the prepared data. Sort through the log if there are any problems.
+Finally, use `run.sh` to start running Kaldi on the prepared data. Sort through the log if there are any problems. Results will be in `kaldi_prep/exp/tri1/decode` and `kaldi_prep/exp/mono/decode` in the form of `wer_{number}`.
 
 ### ArchLinux Specific
 You make need alias `/usr/bin/python` to `/usr/bin/python23`.
