@@ -32,7 +32,7 @@ for key in settings:
 
 audio_data_dir = './audio_data'
 dataset_csv_path = 'dataset.csv'
-kaldi_data_dir = './kaldi'
+kaldi_data_dir = './kaldi_prep'
 train_dir = os.path.join(kaldi_data_dir, "data/train")
 test_dir = os.path.join(kaldi_data_dir, "data/test")
 local_dir = os.path.join(kaldi_data_dir, "data/local")

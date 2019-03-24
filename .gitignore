@@ -3,5 +3,5 @@ dataset.csv
 files/
 env/
 audio_data/
-kaldi/
+kaldi_prep/
 __pycache__
