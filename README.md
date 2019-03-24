@@ -24,15 +24,16 @@ Now it’s your turn to take care of the remaining files.
 1. Create a folder called `dict` inside `data/local`
 2. Copy `lexicon.txt` from your Kaldi `/egs/voxforge` directory to `data/local/dict`
 3. Create `nonsilence_phones.txt`, `silence_phones.txt` and `optional_silence.txt` in `data/local/dict` (see http://kaldi-asr.org/doc/kaldi_for_dummies.html for examples)
-4. Inside the `data` directory, create symlinks for `kaldi/egs/wsj/s5/util` and `kaldi/egs/wsj/s5/steps`.
-5. Create `conf` directory in `data`
-6. Create `decode.config`
+4. Inside the `kaldi_prep` directory, create symlinks for `kaldi/egs/wsj/s5/util` and `kaldi/egs/wsj/s5/steps`.
+5. Inside the `kaldi_prep/local` directory (create it), create a symlink for `kaldi/egs/voxforge/s5/local/score.sh`, or simply copy it
+6. Create `conf` directory in `kaldi_prep`
+7. Create `decode.config` in `conf` directory
 ```
 first_beam=10.0
 beam=13.0
 lattice_beam=6.0
 ```
-7. Create mfcc.conf
+7. Create `mfcc.conf` in `conf` directory
 ```
 --use-energy=false
 ```
