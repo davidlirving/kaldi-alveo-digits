@@ -92,6 +92,10 @@ df = gen_internal_data(
     audio_data_dir=audio_data_dir
 )
 
+print('Sorting data for Kaldi...')
+df = df.sort_values('speaker')
+df = df.sort_values('utterance_id')
+
 print('Preparation complete. \n\nRetrieving data...')
 # Format our 'prompt' column into their numbers
 for index, row in df.iterrows():
@@ -126,6 +130,10 @@ if not os.path.exists(local_dir):
 
 train_set = df.sample(frac=0.8, random_state=100)
 test_set = df.drop(train_set.index)
+train_set = train_set.sort_values('speaker')
+train_set = train_set.sort_values('utterance_id')
+test_set = test_set.sort_values('speaker')
+test_set = test_set.sort_values('utterance_id')
 
 print("Generating train dataset...")
 gen_set_data(train_set, train_dir)
