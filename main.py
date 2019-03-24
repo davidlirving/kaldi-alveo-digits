@@ -3,7 +3,8 @@
 import os
 import sys
 from inspect import getsourcefile
-from generator import gen_kaldi_data
+from generator import gen_set_data
+from generator import gen_local_data
 from generator import gen_internal_data
 
 import pandas as pd
@@ -31,9 +32,10 @@ for key in settings:
 
 audio_data_dir = './audio_data'
 dataset_csv_path = 'dataset.csv'
-kaldi_data_dir = './kaldi_data' # Where we'll put generated files from our csv
-train_dir = os.path.join(kaldi_data_dir, "train")
-test_dir = os.path.join(kaldi_data_dir, "test")
+kaldi_data_dir = './kaldi'
+train_dir = os.path.join(kaldi_data_dir, "data/train")
+test_dir = os.path.join(kaldi_data_dir, "data/test")
+local_dir = os.path.join(kaldi_data_dir, "data/local")
 
 # Describe our word dictionary for our digits
 digit_dict = {
@@ -118,13 +120,18 @@ if not os.path.exists(train_dir):
 if not os.path.exists(test_dir):
     print('Creating %s...' % test_dir)
     os.makedirs(test_dir)
+if not os.path.exists(local_dir):
+    print('Creating %s...' % test_dir)
+    os.makedirs(local_dir)
 
 train_set = df.sample(frac=0.8, random_state=100)
 test_set = df.drop(train_set.index)
 
 print("Generating train dataset...")
-gen_kaldi_data(train_set, train_dir)
-print("\nGenerating test dataset...")
-gen_kaldi_data(test_set, test_dir)
+gen_set_data(train_set, train_dir)
+print("Generating test dataset...")
+gen_set_data(test_set, test_dir)
+print("Generating local data...")
+gen_local_data(df, local_dir)
 
 print('All operations completed successfully.')

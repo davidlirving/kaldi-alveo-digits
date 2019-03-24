@@ -86,9 +86,9 @@ def gen_corpus(df, file_path):
     with open(file_path, 'w') as data_file:
         data_file.write(data)
 
-def gen_kaldi_data(df, output_dir):
+def gen_set_data(df, output_dir):
     """
-        Generate all of our needed data for Kaldi to train the model.
+        Generate all of our needed data for a specific set (e.g test/train)
     """
     print("Generating wav.scp...")
     gen_wavscp(df, os.path.join(output_dir, 'wav.scp'))
@@ -96,5 +96,10 @@ def gen_kaldi_data(df, output_dir):
     gen_text(df, os.path.join(output_dir, 'text'))
     print("Generating utt2spk...")
     gen_utt2spk(df, os.path.join(output_dir, 'utt2spk'))
+
+def gen_local_data(df, output_dir):
+    """
+        Generate all of the needed data for the local dir
+    """
     print("Generating corpus...")
     gen_corpus(df, os.path.join(output_dir, 'corpus'))
