@@ -8,7 +8,7 @@ Requirements:
 
 To build our dataset, we will use 10 speakers with 10 different audio clips from each speaker, totalling at 100 audio clips. To use the Alveo dataset, you can register for an account [here] (http://app.alveo.edu.au/), then prepare your dataset by using the [AusTalk query tool] (https://austalk-query.apps.alveo.edu.au/). Some scripts have been written for you to simplify the process from start to finish and can be found in this repository.
 
-AusTalk Query will allow you to search through the metadata of over a few hundred thousand audio files as well as their speakers. In your first data set, you should have a mix of male and female speakers, with roughly 10 audio clips from each speaker, totalling us at around 400 words as each speech file has four spoken numbers in total. You may wish to use a less variable dataset by keeping the speaker age fairly narrow (e.g 18-30) with the speaker’s first language as English. After choosing your speakers, export the data as CSV and put it in the root directory of your local repository.
+AusTalk Query will allow you to search through the metadata of over a few hundred thousand audio files as well as their speakers. In your first data set, you should have a mix of male and female speakers, with roughly 10 audio clips from each speaker, totalling us at around 400 words as each speech file has four spoken numbers in total. You may wish to use a less variable dataset by keeping the speaker age fairly narrow (e.g 18-30) with the speaker’s first language as English. After choosing your speakers, export the data as CSV and put it in the root directory of your local repository. Make sure that there are no duplicate digit readouts from the same speaker, Kaldi does not like this.
 
 To run the scripts, you will need to use Python 3, and the dependencies from requirements.txt. Set environment variables `ALVEO_API_URL` to `https://app.alveo.edu.au`, `ALVEO_API_KEY` to your API key obtained on the Alveo website. When set, `python main.py` will begin pulling and setting up some of the data for you. This script will:
 - Authenticate with your API key to download the speech files
@@ -37,4 +37,7 @@ lattice_beam=6.0
 --use-energy=false
 ```
 
-Finally, use `run.sh` to start running Kaldi on the prepared data.
+Finally, use `run.sh` to start running Kaldi on the prepared data. Sort through the log if there are any problems.
+
+### ArchLinux Specific
+You make need alias `/usr/bin/python` to `/usr/bin/python23`.
