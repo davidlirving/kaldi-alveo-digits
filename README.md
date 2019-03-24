@@ -1,4 +1,4 @@
-This is an example project that demonstrates how to use the Alveo dataset to create an automatic digit recognition model with Kaldi. For this project, we will pull data from Alveo of various speakers saying various numbers at random, prepare the data for Kaldi, then train Kaldi on the data that has been prepared for it. This guide is based on [http://kaldi-asr.org/doc/kaldi_for_dummies.html] (http://kaldi-asr.org/doc/kaldi_for_dummies.html) which includes some troubleshooting information and more in-depth reading; the guide is built from parts of the Yesno, Voxforge and LibriSpeech examples.
+This is an example project that demonstrates how to use the Alveo dataset to create an automatic digit recognition model with Kaldi. For this project, we will pull data from Alveo of various speakers saying various numbers at random, prepare the data for Kaldi, then train Kaldi on the data that has been prepared for it. This guide is based on [http://kaldi-asr.org/doc/kaldi_for_dummies.html](http://kaldi-asr.org/doc/kaldi_for_dummies.html) which includes some troubleshooting information and more in-depth reading; the guide is built from parts of the Yesno, Voxforge and LibriSpeech examples.
 
 Requirements:
 - Python 3
@@ -6,7 +6,7 @@ Requirements:
 - Pandas library for Python
 - Kaldi with OpenFst support and SRILM (see `kaldi/tools/install_srilm.sh`).
 
-To build our dataset, we will use 10 speakers with 10 different audio clips from each speaker, totalling at 100 audio clips. To use the Alveo dataset, you can register for an account [here] (http://app.alveo.edu.au/), then prepare your dataset by using the [AusTalk query tool] (https://austalk-query.apps.alveo.edu.au/). Some scripts have been written for you to simplify the process from start to finish and can be found in this repository.
+To build our dataset, we will use 10 speakers with 10 different audio clips from each speaker, totalling at 100 audio clips. To use the Alveo dataset, you can register for an account [here](http://app.alveo.edu.au/), then prepare your dataset by using the [AusTalk query tool](https://austalk-query.apps.alveo.edu.au/). Some scripts have been written for you to simplify the process from start to finish and can be found in this repository.
 
 AusTalk Query will allow you to search through the metadata of over a few hundred thousand audio files as well as their speakers. In your first data set, you should have a mix of male and female speakers, with roughly 10 audio clips from each speaker, totalling us at around 400 words as each speech file has four spoken numbers in total. You may wish to use a less variable dataset by keeping the speaker age fairly narrow (e.g 18-30) with the speaker’s first language as English. After choosing your speakers, export the data as CSV and put it in the root directory of your local repository. Make sure that there are no duplicate digit readouts from the same speaker, Kaldi does not like this.
 
@@ -33,13 +33,13 @@ first_beam=10.0
 beam=13.0
 lattice_beam=6.0
 ```
-7. Create `mfcc.conf` in `conf` directory
+8. Create `mfcc.conf` in `conf` directory
 ```
 --use-energy=false
 ```
-8. Head to the [Kaldi for Dummies guide] (http://kaldi-asr.org/doc/kaldi_for_dummies.html#kaldi_for_dummies_running) and put the scripts into the `kaldi_prep` directory.
+9. Head to the [Kaldi for Dummies guide](http://kaldi-asr.org/doc/kaldi_for_dummies.html#kaldi_for_dummies_running) and put the scripts into the `kaldi_prep` directory.
 
-Finally, use `run.sh` to start running Kaldi on the prepared data. Sort through the log if there are any problems. Results will be in `kaldi_prep/exp/tri1/decode` and `kaldi_prep/exp/mono/decode` in the form of `wer_{number}`.
+Finally, use `run.sh` to start training and running models on the prepared data. Sort through the logs if there are any problems. Results will be in `kaldi_prep/exp/tri1/decode` and `kaldi_prep/exp/mono/decode` in the form of `wer_{number}`.
 
 ### ArchLinux Specific
-You make need alias `/usr/bin/python` to `/usr/bin/python23`.
+You may need alias `/usr/bin/python` to `/usr/bin/python23`.
