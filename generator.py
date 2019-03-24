@@ -102,4 +102,4 @@ def gen_local_data(df, output_dir):
         Generate all of the needed data for the local dir
     """
     print("Generating corpus...")
-    gen_corpus(df, os.path.join(output_dir, 'corpus'))
+    gen_corpus(df, os.path.join(output_dir, 'corpus.txt'))
