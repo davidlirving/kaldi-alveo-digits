@@ -16,9 +16,9 @@ def gen_internal_data(df, digit_dict, audio_data_dir):
     for index, row in df.iterrows():
         df.at[index, 'number_prompt'] = numerate(row['media'], digit_dict)
         df.at[index, 'saved_file_path'] = os.path.abspath(
-            os.path.join(audio_data_dir, row['speaker'], '%s.wav' % row['number_prompt'])
+            os.path.join(audio_data_dir, row['speaker'], '%s' % row['media'])
         )
-        df.at[index, 'utterance_id'] = "%s__%s" % (row['speaker'], row['number_prompt'])
+        df.at[index, 'utterance_id'] = "%s" % row['item']
         df.at[index, 'prompt_fmt'] = row['prompt'].replace(', ', ' ')
     return df
 
