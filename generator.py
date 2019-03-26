@@ -40,6 +40,28 @@ def gen_wavscp(df, file_path):
     with open(file_path, 'w') as data_file:
         data_file.write(data)
 
+def gen_spk2gender(df, file_path):
+    """
+        Generate speaker gender data.
+        <speaker_id> <gender>
+    """
+    data = ""
+    uniq = df.drop_duplicates(subset=['speaker',])
+    for index, row in uniq.iterrows():
+        gender = "o"
+        if row['gender'] == "male":
+            gender = "m"
+        elif row['gender'] == "female":
+            gender = "f"
+
+        data += '%s %s\n' % (
+            row['speaker'],
+            gender
+        )
+
+    with open(file_path, 'w') as data_file:
+        data_file.write(data)
+
 def gen_text(df, file_path):
     """
         Generate our text file
@@ -90,16 +112,18 @@ def gen_set_data(df, output_dir):
     """
         Generate all of our needed data for a specific set (e.g test/train)
     """
-    print("Generating wav.scp...")
+    print("- Generating wav.scp...")
     gen_wavscp(df, os.path.join(output_dir, 'wav.scp'))
-    print("Generating text...")
+    print("- Generating text...")
     gen_text(df, os.path.join(output_dir, 'text'))
-    print("Generating utt2spk...")
+    print("- Generating utt2spk...")
     gen_utt2spk(df, os.path.join(output_dir, 'utt2spk'))
+    print("- Generating gender information...")
+    gen_spk2gender(df, os.path.join(output_dir, 'spk2gender'))
 
 def gen_local_data(df, output_dir):
     """
         Generate all of the needed data for the local dir
     """
-    print("Generating corpus...")
+    print("- Generating corpus...")
     gen_corpus(df, os.path.join(output_dir, 'corpus.txt'))
