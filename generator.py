@@ -14,12 +14,16 @@ def gen_internal_data(df, digit_dict, audio_data_dir):
         easy to read fashion.
     """
     for index, row in df.iterrows():
-        df.at[index, 'number_prompt'] = numerate(row['media'], digit_dict)
+        number_prompt = numerate(row['prompt'], digit_dict)
+        utt_padding = row['speaker'] + "".zfill(12 - len(row['speaker']))
+
+        df.at[index, 'number_prompt'] = number_prompt
         df.at[index, 'saved_file_path'] = os.path.abspath(
             os.path.join(audio_data_dir, row['speaker'], '%s' % row['media'])
         )
-        df.at[index, 'utterance_id'] = "%s" % row['item']
+        df.at[index, 'utterance_id'] = "%s__%s_-_%s" % (utt_padding, number_prompt, row['item'])
         df.at[index, 'prompt_fmt'] = row['prompt'].replace(', ', ' ')
+
     return df
 
 def gen_wavscp(df, file_path):
