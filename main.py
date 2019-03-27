@@ -92,10 +92,6 @@ df = gen_internal_data(
     audio_data_dir=audio_data_dir
 )
 
-print('Sorting data for Kaldi...')
-df = df.sort_values('speaker')
-df = df.sort_values('utterance_id')
-
 print('Preparation complete. \n\nRetrieving data...')
 # Format our 'prompt' column into their numbers
 for index, row in df.iterrows():
@@ -128,18 +124,19 @@ if not os.path.exists(local_dir):
     print('Creating %s...' % test_dir)
     os.makedirs(local_dir)
 
+print('Sorting data for Kaldi...')
+df = df.sort_values(by=['speaker', 'utterance_id'])
+
 train_set = df.sample(frac=0.8, random_state=100)
 test_set = df.drop(train_set.index)
-train_set = train_set.sort_values('speaker')
-train_set = train_set.sort_values('utterance_id')
-test_set = test_set.sort_values('speaker')
-test_set = test_set.sort_values('utterance_id')
+train_set = train_set.sort_values(by=['speaker', 'utterance_id'])
+test_set = test_set.sort_values(by=['speaker', 'utterance_id'])
 
-print("Generating train dataset...")
+print("\nGenerating train dataset...")
 gen_set_data(train_set, train_dir)
-print("Generating test dataset...")
+print("\nGenerating test dataset...")
 gen_set_data(test_set, test_dir)
-print("Generating local data...")
+print("\nGenerating local data...")
 gen_local_data(df, local_dir)
 
-print('All operations completed successfully.')
+print('\nAll operations completed successfully.')
