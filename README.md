@@ -22,12 +22,11 @@ To run the scripts, you will need to use Python 3, and the dependencies from req
 
 Now it’s your turn to take care of the remaining files.
 1. Create a folder called `dict` inside `data/local`
-2. Copy `lexicon.txt` from your Kaldi `/egs/voxforge` directory to `data/local/dict`
-3. Create `nonsilence_phones.txt`, `silence_phones.txt` and `optional_silence.txt` in `data/local/dict` (see http://kaldi-asr.org/doc/kaldi_for_dummies.html for examples)
-4. Inside the `kaldi_prep` directory, create symlinks for `kaldi/egs/wsj/s5/util` and `kaldi/egs/wsj/s5/steps`.
-5. Inside the `kaldi_prep/local` directory (create it), create a symlink for `kaldi/egs/voxforge/s5/local/score.sh`, or simply copy it
-6. Create `conf` directory in `kaldi_prep`
-7. Create `decode.config` in `conf` directory
+2. Copy `lexicon.txt`, `nonsilence_phones.txt`, `silence_phones.txt`, `optional_silence.txt` from `kaldi_presets` directory to `kaldi_prep/data/local/dict`
+3. Inside the `kaldi_prep` directory, create symlinks for `kaldi/egs/wsj/s5/util` and `kaldi/egs/wsj/s5/steps`.
+4. Inside the `kaldi_prep/local` directory (create it), create a symlink for `kaldi/egs/voxforge/s5/local/score.sh`, or simply copy it
+5. Create `conf` directory in `kaldi_prep`
+6. Create `decode.config` in `conf` directory
 ```
 first_beam=10.0
 beam=13.0
@@ -37,12 +36,12 @@ lattice_beam=6.0
 ```
 --use-energy=false
 ```
-9. Head to the [Kaldi for Dummies guide](http://kaldi-asr.org/doc/kaldi_for_dummies.html#kaldi_for_dummies_running) and put the scripts into the `kaldi_prep` directory.
+9. Copy the shell scripts from `kaldi_presets` to `kaldi_prep`.
 
-Finally, use `run.sh` to start training and running models on the prepared data. Sort through the logs if there are any problems. Results will be in `kaldi_prep/exp/tri1/decode` and `kaldi_prep/exp/mono/decode` in the form of `wer_{number}`.
+Finally, use `run.sh` to start training and running models on the prepared data. Sort through the logs if there are any problems. Results will be in `kaldi_prep/exp/tri1/decode` and `kaldi_prep/exp/mono/decode` in the form of `wer_{number}`. You can use the script `evaluate_accuracy.sh` on a decode log to determine which files do not match the Alveo transcription.
 
 ### ArchLinux Specific
-You may need alias `/usr/bin/python` to `/usr/bin/python23`.
+You may need alias `/usr/bin/python` to `/usr/bin/python23`. You may also need to set a path for openfst libraries to be detected `export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/kaldi/tools/openfst/lib`.
 
 ### Utterance ID significance
-Kaldi operates on `LC_ALL=C` for C++ style sorting. Python3.7 with pandas can be a nuisance with underscores (which is primarily what Alveo metadata makes use of), so speaker_ids are treated as a 12 byte identifier and are filled with zeroes from the right side in order to ensure that each speaker_id is of the same length. This way, it does not matter how C/pandas sorting treats underscores and numbers.
+Kaldi operates on `LC_ALL=C` for C style sorting. Python3.7 with pandas can be a nuisance with underscores (which is primarily what Alveo metadata makes use of), so speaker_ids are treated as a 12 byte identifier and are filled with zeroes from the right side in order to ensure that each speaker_id is of the same length. This way, it does not matter how C/pandas sorting treats underscores and numbers.
